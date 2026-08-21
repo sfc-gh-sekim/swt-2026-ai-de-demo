@@ -55,11 +55,14 @@ METRICS (
         WITH SYNONYMS = ('매출', '총매출', '순매출', '매출액', '총 순매출', 'revenue', 'net revenue', 'total sales', 'total net revenue')
         COMMENT = '공식 매출 정의: 확정된 주문(order_status = F)에 대해 라인에서 계산한 순매출(할인 반영, 세금 제외). 이 기준은 mart 컬럼만 봐서는 알 수 없다.',
     orders.order_count AS COUNT(orders.order_id)
-        WITH SYNONYMS = ('주문 수', '주문 건수', '주문량', 'number of orders', 'order volume', 'count of orders'),
+        WITH SYNONYMS = ('주문 수', '주문 건수', '주문량', 'number of orders', 'order volume', 'count of orders')
+        COMMENT = '주문 건수. total_revenue와 달리 order_status로 걸러내지 않고 모든 상태의 주문을 센다.',
     orders.avg_order_value AS SUM(orders.net_revenue) / NULLIF(COUNT(orders.order_id), 0)
-        WITH SYNONYMS = ('평균 주문 금액', '건당 평균 매출', 'AOV', 'average order value', 'average basket size'),
+        WITH SYNONYMS = ('평균 주문 금액', '건당 평균 매출', 'AOV', 'average order value', 'average basket size')
+        COMMENT = '주문 한 건당 평균 순매출. 분자는 모든 상태의 net_revenue이므로 total_revenue / order_count와 값이 다르다.',
     orders.units_sold AS SUM(orders.total_quantity)
         WITH SYNONYMS = ('판매 수량', '판매량', '총 수량', 'units', 'quantity sold', 'total quantity')
+        COMMENT = '주문에 포함된 라인 수량의 합. 금액이 아니라 개수 기준이다.'
 )
 
 COMMENT = '매출 분석 semantic model: 세그먼트, 지역, 기간별 순매출과 주문량, 평균 주문 금액.'
