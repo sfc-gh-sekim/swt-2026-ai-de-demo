@@ -1,13 +1,13 @@
 name: Semantic View PR Review (Cortex Code)
 
-# On PRs that touch a semantic view model, run Cortex Code in batch mode with the
-# project's `semantic-view-authoring` skill to review the change for spec and
-# metadata compliance, and post the findings as a PR comment.
+# semantic view 모델을 건드리는 PR이 올라오면, Cortex Code를 배치 모드로 실행해 이
+# 프로젝트의 `semantic-view-authoring` 스킬로 변경 사항이 스펙과 메타데이터 규칙을
+# 지키는지 리뷰하고, 그 결과를 PR 코멘트로 남깁니다.
 #
-# NOTE: This is an ADVISORY review only. Deployment is still done exclusively by
-# the Snowflake CLI in deploy_dbt_project.yaml - Cortex Code never deploys.
+# 참고: 이 리뷰는 어디까지나 참고용입니다. 실제 배포는 deploy_dbt_project.yaml에서
+# Snowflake CLI만으로 진행합니다. Cortex Code는 배포를 하지 않습니다.
 #
-# Required repo secrets:
+# 필요한 repo secret:
 #   SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER, SNOWFLAKE_PASSWORD
 
 on:
@@ -26,7 +26,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # need base branch to diff changed files
+          fetch-depth: 0   # 변경 파일을 diff하려면 base 브랜치가 필요합니다
 
       - name: Identify changed semantic view models
         id: changed
