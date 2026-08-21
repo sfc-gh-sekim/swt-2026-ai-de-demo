@@ -85,6 +85,11 @@ Verify each item and report pass/fail with file:line refs and a concrete fix for
 Output: concise markdown titled by the model file, grouped into Pass / Fail, with
 file:line references and a concrete fix for each failure. Do not modify any files.
 
+Write the review in the language the reviewer asked in. When the request is in
+Korean, write the findings and the section headings in Korean ('통과' / '실패')
+even though this checklist is written in English. Always leave SQL identifiers,
+clause names (TABLES, FACTS, METRICS, ...) and file paths untranslated.
+
 # Best Practices
 
 - One semantic view per analytic subject area; keep it small and curated.
