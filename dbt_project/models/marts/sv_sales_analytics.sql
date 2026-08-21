@@ -37,7 +37,8 @@ DIMENSIONS (
         WITH SYNONYMS = ('주문일', '주문 날짜', '구매일', '거래일', 'order day', 'purchase date', 'transaction date')
         COMMENT = '주문이 발생한 날짜.',
     orders.order_status AS orders.order_status
-        WITH SYNONYMS = ('상태', '주문 상태', 'status'),
+        WITH SYNONYMS = ('상태', '주문 상태', 'status')
+        COMMENT = '주문 상태 코드: F는 확정(fulfilled), O는 미결(open), P는 처리 중(in progress). total_revenue는 F만 집계하므로 매출을 해석할 때 이 코드가 기준이 된다.',
     orders.order_priority AS orders.order_priority
         WITH SYNONYMS = ('우선순위', '주문 우선순위', 'priority'),
     customers.market_segment AS customers.market_segment
