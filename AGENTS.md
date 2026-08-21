@@ -12,8 +12,10 @@
 
 ## 환경과 연결
 
-- 로컬 Python 환경: conda 환경 `de214`, 경로는 `/opt/homebrew/Caskroom/miniconda/base/envs/de214/bin`.
-- Snowflake 연결: **`default`**. `-c` 플래그는 붙이지 않습니다.
+- 로컬 Python 환경: pyenv `3.10.16` (`/Users/skim/.pyenv/versions/3.10.16/bin`). `dbt`는 PATH에
+  이미 잡혀 있으므로 그냥 `dbt`로 부르면 됩니다.
+- Snowflake 연결: **`aws-uswest`**, 역할은 **`DEMO_ROLE`**. `snow` 명령에는 항상
+  `-c aws-uswest --role DEMO_ROLE`을 붙이세요 (CLI 기본 연결은 다른 계정입니다).
 - `profiles.yml`, `~/.dbt/profiles.yml`, `connections.toml`은 **절대** 읽거나 출력하지 마세요. 비밀 정보가 들어 있을 수 있습니다.
 
 ## 데이터베이스와 스키마 구성
@@ -48,13 +50,11 @@
 ## 최초 1회 셋업
 
 ```bash
-BIN=/opt/homebrew/Caskroom/miniconda/base/envs/de214/bin
-
 # TPC-H에서 난독화된 RAW 원본 테이블 생성
-$BIN/snow sql -f scripts/00_setup_sources.sql
+snow sql -c aws-uswest --role DEMO_ROLE -f scripts/00_setup_sources.sql
 
 # dbt 패키지 번들 (배포본에 함께 포함됨. 로컬에서도 필요)
-cd dbt_project && $BIN/dbt deps --profiles-dir .
+cd dbt_project && dbt deps --profiles-dir .
 ```
 
 ## 실행 방법
@@ -62,12 +62,11 @@ cd dbt_project && $BIN/dbt deps --profiles-dir .
 **로컬** (개발 기본값. 배포를 거치지 않아서 빠릅니다):
 
 ```bash
-BIN=/opt/homebrew/Caskroom/miniconda/base/envs/de214/bin
 cd dbt_project
-$BIN/dbt run --target dev
-$BIN/dbt test --target dev
+dbt run --target dev
+dbt test --target dev
 # 모델 하나만 돌릴 때:
-$BIN/dbt run --select <model> --target dev
+dbt run --select <model> --target dev
 ```
 
 `DBT_PROFILES_DIR=$HOME/.dbt`가 필요합니다. `~/.dbt/profiles.yml`은
@@ -77,11 +76,14 @@ $BIN/dbt run --select <model> --target dev
 배포 파이프라인 전체를 확인할 때 필요합니다):
 
 ```bash
-BIN=/opt/homebrew/Caskroom/miniconda/base/envs/de214/bin
 cd dbt_project
-$BIN/snow dbt deploy DE214_DEMO --source . --database DE214_DEMO --schema DEV
-$BIN/snow dbt execute --dbt-version "1.10.15" --database DE214_DEMO --schema DEV DE214_DEMO run --target dev
-$BIN/snow dbt execute --dbt-version "1.10.15" --database DE214_DEMO --schema DEV DE214_DEMO test --target dev
+dbt deps --profiles-dir .       
+snow dbt deploy DE214_DEMO -c aws-uswest --role DEMO_ROLE --source . \
+  --database DE214_DEMO --schema DEV
+snow dbt execute -c aws-uswest --role DEMO_ROLE --dbt-version "1.10.15" \
+  --database DE214_DEMO --schema DEV DE214_DEMO run  --target dev
+snow dbt execute -c aws-uswest --role DEMO_ROLE --dbt-version "1.10.15" \
+  --database DE214_DEMO --schema DEV DE214_DEMO test --target dev
 ```
 
 ## 반드시 지킬 것
