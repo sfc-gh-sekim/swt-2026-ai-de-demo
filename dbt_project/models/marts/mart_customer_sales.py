@@ -1,10 +1,9 @@
 def model(dbt, session):
-    """Customer-grain sales mart (Snowpark).
+    """고객 단위 매출 mart (Snowpark).
 
-    Rolls order-grain sales up to one row per customer and enriches with the
-    customer's segment, nation and region. Aggregating to order grain first
-    avoids the classic customer -> order -> line fan-out that would
-    double-count revenue.
+    주문 단위 매출을 고객당 한 행으로 집계하고, 고객의 세그먼트·국가·지역 정보를
+    붙인다. 주문 단위로 먼저 집계하는 이유는, 고객 -> 주문 -> 라인 순으로
+    조인하면 행이 불어나면서 매출이 중복 집계되는 흔한 함정을 피하기 위해서다.
     """
     dbt.config(materialized="table")
 

@@ -4,10 +4,10 @@
     )
 }}
 
--- The one SQL model in the project (everything else is Python/Snowpark),
--- included to show SQL and Python models coexist in the same dbt project.
--- Cleans up the cryptic RAW customer master into business-friendly columns
--- and resolves nation/region from the GEO lookup.
+-- 이 프로젝트에서 유일한 SQL 모델이다(나머지는 전부 Python/Snowpark).
+-- 한 dbt 프로젝트 안에서 SQL 모델과 Python 모델이 같이 굴러간다는 걸 보여주려고 넣었다.
+-- 알아보기 힘든 RAW 고객 마스터를 업무에서 쓰는 이름의 컬럼으로 정리하고,
+-- GEO 룩업에서 국가와 지역을 붙인다.
 
 with customers as (
     select
