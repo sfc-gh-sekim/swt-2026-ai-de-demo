@@ -8,13 +8,13 @@
 TABLES (
     customers AS {{ ref('mart_customer_sales') }}
         PRIMARY KEY (customer_id)
-        WITH SYNONYMS = ('accounts', 'clients', 'buyers', 'customer sales')
+        WITH SYNONYMS = ('고객', '거래처', '계정', 'accounts', 'clients', 'buyers', 'customer sales')
         COMMENT = 'Customer-grain fact: one row per customer with rolled-up revenue, order counts, and geo enrichment.'
 )
 
 FACTS (
     customers.net_revenue AS customers.net_revenue
-        WITH SYNONYMS = ('net sales amount')
+        WITH SYNONYMS = ('순매출액', 'net sales amount')
         COMMENT = 'Line-derived net revenue for this customer: SUM of extended_price * (1 - discount) across all orders. This is the official revenue measure.',
     customers.order_total AS customers.order_total
         COMMENT = 'Sum of TPC-H header order_total for this customer; includes tax. NOT the official revenue metric.',
@@ -26,27 +26,27 @@ FACTS (
 
 DIMENSIONS (
     customers.customer_name AS customers.customer_name
-        WITH SYNONYMS = ('customer', 'account name', 'client name', 'buyer name'),
+        WITH SYNONYMS = ('고객명', '거래처명', '계정명', 'customer', 'account name', 'client name', 'buyer name'),
     customers.market_segment AS customers.market_segment
-        WITH SYNONYMS = ('segment', 'customer segment', 'market', 'industry')
+        WITH SYNONYMS = ('세그먼트', '마켓 세그먼트', '고객 세그먼트', '시장', '산업', 'segment', 'customer segment', 'market', 'industry')
         COMMENT = 'Customer market segment (e.g. AUTOMOBILE, BUILDING, FURNITURE).',
     customers.nation AS customers.nation
-        WITH SYNONYMS = ('country', 'nation name', 'customer country'),
+        WITH SYNONYMS = ('국가', '나라', '국가명', '고객 국가', 'country', 'nation name', 'customer country'),
     customers.region AS customers.region
-        WITH SYNONYMS = ('sales region', 'geo region', 'geography', 'customer region'),
+        WITH SYNONYMS = ('지역', '권역', '영업 지역', '고객 지역', 'sales region', 'geo region', 'geography', 'customer region'),
     customers.most_recent_order_date AS customers.most_recent_order_date
-        WITH SYNONYMS = ('last order date', 'latest order', 'most recent purchase')
+        WITH SYNONYMS = ('최근 주문일', '마지막 주문일', '최종 구매일', 'last order date', 'latest order', 'most recent purchase')
         COMMENT = 'Date of the most recent order placed by this customer.'
 )
 
 METRICS (
     customers.total_revenue AS SUM(customers.net_revenue)
-        WITH SYNONYMS = ('revenue', 'net revenue', 'total sales', 'total net revenue', 'customer revenue')
+        WITH SYNONYMS = ('매출', '총매출', '순매출', '매출액', '고객 매출', 'revenue', 'net revenue', 'total sales', 'total net revenue', 'customer revenue')
         COMMENT = 'Official revenue: SUM of line-derived net revenue (net of discount, excludes tax) across all customers in the group.',
     customers.customer_count AS COUNT(customers.customer_id)
-        WITH SYNONYMS = ('number of customers', 'count of customers', 'customer volume', 'headcount'),
+        WITH SYNONYMS = ('고객 수', '고객 수량', '거래처 수', 'number of customers', 'count of customers', 'customer volume', 'headcount'),
     customers.avg_revenue_per_customer AS SUM(customers.net_revenue) / NULLIF(COUNT(customers.customer_id), 0)
-        WITH SYNONYMS = ('average customer revenue', 'revenue per customer', 'ARPC')
+        WITH SYNONYMS = ('고객당 평균 매출', '평균 고객 매출', 'ARPC', 'average customer revenue', 'revenue per customer')
         COMMENT = 'Average net revenue per customer: total_revenue / customer_count.'
 )
 
