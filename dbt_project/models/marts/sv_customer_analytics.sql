@@ -26,14 +26,17 @@ FACTS (
 
 DIMENSIONS (
     customers.customer_name AS customers.customer_name
-        WITH SYNONYMS = ('고객명', '거래처명', '계정명', 'customer', 'account name', 'client name', 'buyer name'),
+        WITH SYNONYMS = ('고객명', '거래처명', '계정명', 'customer', 'account name', 'client name', 'buyer name')
+        COMMENT = '고객 이름. TPC-H 생성값이라 Customer#000012345 형태이며, 사람이 읽는 상호명이 아니다.',
     customers.market_segment AS customers.market_segment
         WITH SYNONYMS = ('세그먼트', '마켓 세그먼트', '고객 세그먼트', '시장', '산업', 'segment', 'customer segment', 'market', 'industry')
         COMMENT = 'Customer market segment (e.g. AUTOMOBILE, BUILDING, FURNITURE).',
     customers.nation AS customers.nation
-        WITH SYNONYMS = ('국가', '나라', '국가명', '고객 국가', 'country', 'nation name', 'customer country'),
+        WITH SYNONYMS = ('국가', '나라', '국가명', '고객 국가', 'country', 'nation name', 'customer country')
+        COMMENT = '고객이 속한 국가. region 안에 중첩된 값이므로 단독 집계 시 region과 함께 보는 것이 안전하다.',
     customers.region AS customers.region
-        WITH SYNONYMS = ('지역', '권역', '영업 지역', '고객 지역', 'sales region', 'geo region', 'geography', 'customer region'),
+        WITH SYNONYMS = ('지역', '권역', '영업 지역', '고객 지역', 'sales region', 'geo region', 'geography', 'customer region')
+        COMMENT = '고객이 속한 대륙 단위 권역 (예: ASIA, EUROPE). nation의 상위 레벨이다.',
     customers.most_recent_order_date AS customers.most_recent_order_date
         WITH SYNONYMS = ('최근 주문일', '마지막 주문일', '최종 구매일', 'last order date', 'latest order', 'most recent purchase')
         COMMENT = 'Date of the most recent order placed by this customer.'
@@ -44,7 +47,8 @@ METRICS (
         WITH SYNONYMS = ('매출', '총매출', '순매출', '매출액', '고객 매출', 'revenue', 'net revenue', 'total sales', 'total net revenue', 'customer revenue')
         COMMENT = 'Official revenue: SUM of line-derived net revenue (net of discount, excludes tax) across all customers in the group.',
     customers.customer_count AS COUNT(customers.customer_id)
-        WITH SYNONYMS = ('고객 수', '고객 수량', '거래처 수', 'number of customers', 'count of customers', 'customer volume', 'headcount'),
+        WITH SYNONYMS = ('고객 수', '고객 수량', '거래처 수', 'number of customers', 'count of customers', 'customer volume', 'headcount')
+        COMMENT = '고객 수. 뷰가 고객 단위이므로 행 수와 같다. 주문한 적 없는 고객은 mart_customer_sales에 없어 집계에서 빠진다.',
     customers.avg_revenue_per_customer AS SUM(customers.net_revenue) / NULLIF(COUNT(customers.customer_id), 0)
         WITH SYNONYMS = ('고객당 평균 매출', '평균 고객 매출', 'ARPC', 'average customer revenue', 'revenue per customer')
         COMMENT = 'Average net revenue per customer: total_revenue / customer_count.'
